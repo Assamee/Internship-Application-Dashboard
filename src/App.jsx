@@ -1,6 +1,5 @@
 import { useState } from 'react';
 
-
 // Dummy Data
 const DummyData = [
   {id : 1, role : "React Developer",   company : "Meta",   priority : "High", type : "Spring Week", applied : true,  status : "Online Assessment", notes : ""},
