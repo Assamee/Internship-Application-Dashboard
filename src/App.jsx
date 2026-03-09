@@ -23,10 +23,18 @@ function ApplicationRow ({ application }) {
 
 
 function ApplicationTable ({ table }) {
+  const [searchQuery, setSearchQuery] = useState('');
+
+  // runs for each 'application' (index) in the table array
+  const filteredTable = table.filter((application) => {
+    // if .includes() returns true, then the application is kept in the new array
+    return application.company.toLowerCase().includes(searchQuery.toLowerCase());
+  });
+
 
   return (
     <>
-      <SearchBar query={"Data"}/>
+      <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
 
       <div id="ApplicationTable">
         <table>
@@ -38,7 +46,7 @@ function ApplicationTable ({ table }) {
             - Repeats the function to dynamically render a row for each index (each application object in the array)
             - Then the .map function returns the result (the list of rendered rows) 
           */}
-            {table.map((application) => (
+            {filteredTable.map((application) => (
               <ApplicationRow key={application.id} application={application} />
             ))}
           </tbody>
@@ -61,18 +69,18 @@ export default function App() {
 }
 
 
-function SearchBar ({ query }) {
+function SearchBar ({ searchQuery, setSearchQuery }) {
+
   return (
-    <>
-      <form>
-          <input type="Search" />
-          <button type="Submit">Search</button>
-        </form>
+    <> {/* The 'input' tag creates an event object to store the typed input (stored as 'event') */}
+      <input type="Search" value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)}/>
     </>
   );
 }
 
-function ApplicationCategoryRow  () {
+
+
+function ApplicationCategoryRow () {
   return (
       <tr>
         <th scope="col">Role</th>
