@@ -24,9 +24,11 @@ function ApplicationRow ({ application, handleDelete }) {
   );
 }
 
+
 function ApplicationTable ({ table }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [applications, setApplications] = useState(table);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
 
   // runs for each 'application' (index) in the table array
@@ -46,6 +48,11 @@ function ApplicationTable ({ table }) {
   return (
     <>
       <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+      <br /> <br />
+
+      <button type="button" onClick={() => setIsModalOpen(true)}>
+        Add Application
+      </button>
 
       <div id="ApplicationTable">
         <table>
@@ -63,9 +70,46 @@ function ApplicationTable ({ table }) {
           </tbody>
         </table>
       </div>
+
+      {isModalOpen ? (
+        <div style={{ border: "2px solid black", padding: "20px", marginTop: "20px" }}>
+          <ApplicationForm />
+          <button type="button" onClick={() => setIsModalOpen(false)}>
+            Cancel
+          </button>
+        </div>
+      ) : null}
     </>
   );
 }
+
+function ApplicationForm () {
+  function handleSubmit(event) {
+    event.preventDefault();
+  }
+
+
+  return (
+    <>
+      <form onSubmit={handleSubmit}>
+        <label>
+          Role: 
+          <input type="text" name="role" />
+        </label>
+        <br />
+        <label>
+          Company:
+          <input type="text" name="company" />
+        </label>
+        <br />
+        <button type="submit">
+          Add New Application
+        </button>
+      </form>
+    </>
+  )
+}
+
 
 export default function App() {
   return (
