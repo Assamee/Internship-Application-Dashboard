@@ -7,7 +7,7 @@ const DummyData = [
 ];
 
 
-function ApplicationRow ({ application }) {
+function ApplicationRow ({ application, handleDelete }) {
   return (
       <tr>
         <td scope="col">{application.role}</td>
@@ -17,19 +17,30 @@ function ApplicationRow ({ application }) {
         <td scope="col">{application.applied ? "Yes" : "No"}</td>
         <td scope="col">{application.applied ? application.status : "N/A"}</td>
         <td scope="col">{application.notes}</td>
+        <td scope="col">
+          <button type="button" onClick={() => handleDelete(application.id)}>Delete</button>
+        </td>
       </tr>
   );
 }
 
-
 function ApplicationTable ({ table }) {
   const [searchQuery, setSearchQuery] = useState('');
+  const [applications, setApplications] = useState(table);
+
 
   // runs for each 'application' (index) in the table array
-  const filteredTable = table.filter((application) => {
+  const filteredTable = applications.filter((application) => {
     // if .includes() returns true, then the application is kept in the new array
     return application.company.toLowerCase().includes(searchQuery.toLowerCase());
   });
+
+  function handleDelete (id) {
+    const newTable = applications.filter((application) => {
+      return application.id !== id;
+    });
+    setApplications(newTable);
+  }
 
 
   return (
@@ -47,7 +58,7 @@ function ApplicationTable ({ table }) {
             - Then the .map function returns the result (the list of rendered rows) 
           */}
             {filteredTable.map((application) => (
-              <ApplicationRow key={application.id} application={application} />
+              <ApplicationRow key={application.id} application={application} handleDelete={handleDelete} />
             ))}
           </tbody>
         </table>
@@ -57,7 +68,6 @@ function ApplicationTable ({ table }) {
 }
 
 export default function App() {
-
   return (
     <>
       <div id="Title">
@@ -90,6 +100,7 @@ function ApplicationCategoryRow () {
         <th scope="col">Applied</th>
         <th scope="col">Status</th>
         <th scope="col">Notes</th>
+        <th scope="col">Actions</th>
       </tr>
   );
 }
