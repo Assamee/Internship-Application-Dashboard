@@ -88,7 +88,6 @@ function ApplicationForm () {
     event.preventDefault();
   }
 
-
   return (
     <>
       <form onSubmit={handleSubmit}>
@@ -127,7 +126,7 @@ function SearchBar ({ searchQuery, setSearchQuery }) {
 
   return (
     <> {/* The 'input' tag creates an event object to store the typed input (stored as 'event') */}
-      <input type="Search" value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)}/>
+      <input type="Search" placeholder="Search by Company" value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)}/>
     </>
   );
 }
