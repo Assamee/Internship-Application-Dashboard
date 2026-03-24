@@ -29,12 +29,16 @@ function ApplicationTable ({ table }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [applications, setApplications] = useState(table);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const [searchByCompany, setSearchByCompany] = useState(true);
 
   // runs for each 'application' (index) in the table array
   const filteredTable = applications.filter((application) => {
     // if .includes() returns true, then the application is kept in the new array
-    return application.company.toLowerCase().includes(searchQuery.toLowerCase());
+    if (searchByCompany) {
+      return (application.company.toLowerCase().includes(searchQuery.toLowerCase()))
+    } else {
+      return application.role.toLowerCase().includes(searchQuery.toLowerCase())
+    }
   });
 
   function handleDelete (id) {
@@ -47,7 +51,9 @@ function ApplicationTable ({ table }) {
 
   return (
     <>
-      <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+      <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} searchByCompany={searchByCompany} setSearchByCompany={setSearchByCompany}/>
+      <FilterButton searchByCompany={searchByCompany} setSearchByCompany={setSearchByCompany}/>
+      
       <br /> <br />
 
       <button type="button" onClick={() => setIsModalOpen(true)}>
@@ -73,7 +79,7 @@ function ApplicationTable ({ table }) {
 
       {isModalOpen ? (
         <div style={{ border: "2px solid black", padding: "20px", marginTop: "20px" }}>
-          <ApplicationForm />
+          <ApplicationForm applications={applications} setApplications={setApplications} setIsModalOpen={setIsModalOpen}/>
           <button type="button" onClick={() => setIsModalOpen(false)}>
             Cancel
           </button>
@@ -83,14 +89,29 @@ function ApplicationTable ({ table }) {
   );
 }
 
-function ApplicationForm () {
+function ApplicationForm({ applications, setApplications, setIsModalOpen }) {
   function handleSubmit(event) {
     event.preventDefault();
+    const nextID = Date.now();
+    const form = new FormData(event.target);
+
+    const new_application = {
+      id: nextID, 
+      role: form.get("role") ? form.get("role"):'',
+      company: form.get("company") ? form.get("company"):'',
+      priority: "Medium",
+      type: "Unknown",
+      applied: false,
+      status: "",
+      notes: ""
+    }
+    setApplications([ ...applications, new_application ]);
+    setIsModalOpen(false);
   }
 
   return (
     <>
-      <form onSubmit={handleSubmit}>
+      <form name="applicationform" onSubmit={handleSubmit}>
         <label>
           Role: 
           <input type="text" name="role" />
@@ -122,14 +143,37 @@ export default function App() {
 }
 
 
-function SearchBar ({ searchQuery, setSearchQuery }) {
+function SearchBar ({ searchQuery, setSearchQuery, searchByCompany, setSearchByCompany }) {
+  const placeholder = "Search by " + (searchByCompany ? 'Company' : 'Role')
+
 
   return (
     <> {/* The 'input' tag creates an event object to store the typed input (stored as 'event') */}
-      <input type="Search" placeholder="Search by Company" value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)}/>
+      <input 
+        type="Search" 
+        placeholder= {placeholder} 
+        value={searchQuery} 
+        onChange={(event) => setSearchQuery(event.target.value)}
+      />
     </>
   );
 }
+
+function FilterButton({ searchByCompany, setSearchByCompany }) {
+  function handleFilterButton(){
+    setSearchByCompany(!searchByCompany);
+  }
+
+  return (
+    <>
+      <button type="button" onClick={handleFilterButton}>
+            Search by {!searchByCompany ? 'Company' : 'Role'}
+      </button>
+    </>
+  );
+}
+
+
 
 
 
