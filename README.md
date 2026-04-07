@@ -1,5 +1,7 @@
 # Internship Application Dashboard
 
+[🚀 Live Demo](https://your-custom-url.vercel.app/)
+
 ## ✨ Features
 
 * **Persistent Storage:** Utilises the browser's `localStorage` API to save application data and user theme preferences across page refreshes.
