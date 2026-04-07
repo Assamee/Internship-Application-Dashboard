@@ -1,6 +1,6 @@
 # Internship Application Dashboard
 
-[🚀 Live Demo](https://your-custom-url.vercel.app/)
+[🚀 Live Demo](https://assamee-dashboard.vercel.app/)
 
 ## ✨ Features
 
