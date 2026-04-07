@@ -6,8 +6,89 @@ import {
 
 // Dummy Data
 const DummyData = [
-  {id : 1, role : "React Developer",   company : "Meta",   priority : "High", type : "Spring Week", status : "Online Assessment", notes : ""},
-  {id : 2, role : "Software Engineer", company : "Google", priority : "High", type : "Internship",  status : "", notes : ""},
+  {
+    id: 1, 
+    role: "Software Engineering Intern", 
+    company: "Google", 
+    priority: "High", 
+    type: "Internship",  
+    status: "Interview", 
+    notes: "First technical interview next Tuesday. Focus prep on LeetCode Mediums. Need to make sure I bring up my Calendar Web App project to highlight my experience building RESTful APIs with Node.js and Express.",
+    jobDescription: `Join Google as a Software Engineering Intern and help build products that create opportunities for everyone.
+
+Responsibilities:
+• Write specific, tested, and reliable code using modern frameworks.
+• Develop solutions to complex technical problems.
+• Work closely with your host and team to complete a challenging core project.
+• Write robust automated testing suites to verify API endpoints and handle edge cases.
+
+Minimum qualifications:
+• Currently pursuing a degree in Computer Science or related technical field.
+• Experience with general-purpose programming languages (e.g., Python, JavaScript).
+• Strong foundation in Object-Oriented Programming (OOP) and software optimisation.`
+  },
+  {
+    id: 2, 
+    role: "Technology Consulting Intern", 
+    company: "EY", 
+    priority: "Medium", 
+    type: "Internship",  
+    status: "Assessment Centre", 
+    notes: "Case study interview next week. Need to practice structuring my answers. Focus on how I used Python (Pandas/Seaborn) to validate strategic pivots during the data strategy virtual experience challenge.",
+    jobDescription: `Join our Technology Consulting practice to help global clients solve their most complex digital challenges.
+
+Responsibilities:
+• Assess client IT infrastructure and legacy code to reduce technical debt.
+• Design data-driven strategies for digital transformation and business growth.
+• Present technical and statistical findings to non-technical stakeholders.
+
+Minimum qualifications:
+• Exceptional communication and leadership skills.
+• Ability to bridge the gap between commercial strategy and technical execution.
+• Familiarity with Agile collaboration and driving accessibility standards.`
+  },
+  {
+    id: 3, 
+    role: "Technology Spring Week",   
+    company: "J.P. Morgan",   
+    priority: "High", 
+    type: "Spring Week", 
+    status: "Online Assessment", 
+    notes: "Passed initial screening. OA features a HackerRank algorithmic test. Need to review banking sector commercial awareness and computational complexity before taking it.",
+    jobDescription: `Experience the intersection of finance and technology on our Spring Week programme.
+
+What to expect:
+• Participate in coding challenges focused on scalable financial platforms.
+• Shadow engineers building secure, enterprise-level software.
+• Fast-track opportunity for the Summer Analyst internship.
+
+Requirements:
+• Strong analytical and problem-solving skills.
+• Interest in financial markets and enterprise-level software.
+• Solid understanding of algorithms and data structures.`
+  },
+  {
+    id: 4, 
+    role: "Quantitative Researcher", 
+    company: "Citadel", 
+    priority: "High", 
+    type: "Internship",  
+    status: "Yet to Apply", 
+    notes: "Top priority. Need to brush up on Probability and Linear Algebra for the technical assessment. Plan to highlight my UKMT Silver Award and Further Maths background to demonstrate logical precision under timed conditions.",
+    jobDescription: `Join Citadel as a Quantitative Researcher and work at the forefront of the world's capital markets.
+
+Responsibilities:
+• Develop and test automated investment strategies using advanced statistical modelling.
+• Extract predictive signals from vast, unconventional datasets using Python.
+• Apply rigorous mathematical techniques to solve complex market problems.
+• Collaborating with engineers to translate mathematical models into production-ready code.
+
+Minimum qualifications:
+• Pursuing a degree in a highly technical field (Computer Science, Maths, Physics).
+• Strong proficiency in Python and data manipulation libraries (Pandas, NumPy).
+• Exceptional mathematical foundation (Probability, Statistics, Linear Algebra).
+• Demonstrated record of competitive achievement in mathematics or programming.`
+  }
 ];
 
 
