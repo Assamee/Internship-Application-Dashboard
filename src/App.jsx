@@ -35,7 +35,7 @@ function ApplicationRow ({ application, handleDelete, handleEdit, handleView }) 
           </Button>
           <Button className="m-1 shadow-sm" variant="danger" size="sm" type="button" 
             onClick={(e) => {
-              e.stopPropagation;
+              e.stopPropagation();
               handleDelete(application.id);
             }}
           >
