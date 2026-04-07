@@ -1,31 +1,77 @@
 import { useState, useEffect } from 'react';
 import { 
-  Container, Stack, Table, Button, Form, Modal, Row, Col, InputGroup
+  Container, Table, Button, Form, Modal, Row, Col, InputGroup, Badge, FloatingLabel
 } from 'react-bootstrap';
 
 
 // Dummy Data
 const DummyData = [
-  {id : 1, role : "React Developer",   company : "Meta",   priority : "High", type : "Spring Week", applied : true,  status : "Online Assessment", notes : ""},
-  {id : 2, role : "Software Engineer", company : "Google", priority : "High", type : "Internship",  applied : false, status : "", notes : ""},
+  {id : 1, role : "React Developer",   company : "Meta",   priority : "High", type : "Spring Week", status : "Online Assessment", notes : ""},
+  {id : 2, role : "Software Engineer", company : "Google", priority : "High", type : "Internship",  status : "", notes : ""},
 ];
 
 
-function ApplicationRow ({ application, handleDelete }) {
+function ApplicationRow ({ application, handleDelete, handleEdit, handleView }) {
   return (
-      <tr>
-        <td scope="col">{application.role}</td>
+      <tr className='align-Middle' onClick={() => handleView(application)} style={{ cursor: "pointer" }}>
+        <td scope="col" className='fw-bold'>{application.role}</td>
         <td scope="col">{application.company}</td>
-        <td scope="col">{application.priority}</td>
+        <td scope="col">{getPriorityBadge(application.priority)}</td>
         <td scope="col">{application.type}</td>
-        <td scope="col">{application.applied ? "Yes" : "No"}</td>
-        <td scope="col">{application.applied ? application.status : "N/A"}</td>
-        <td scope="col">{application.notes}</td>
+        <td scope="col">{getStatusBadge(application.status)}</td>
+        <td scope="col" className="text-truncate" style={{ maxWidth: "150px" }}>
+          {application.notes}
+        </td>
+
+        {/* e.stopPropagation to stop also triggering the 'View' modal */}
         <td scope="col">
-          <Button variant="danger" size="sm" type="button" onClick={() => handleDelete(application.id)}>Delete</Button>
+          <Button className="m-1 shadow-sm" variant="info" size="sm" type="button" 
+            onClick={(e) => {
+              e.stopPropagation(); 
+              handleEdit(application.id);
+            }}
+          >
+            <i className="bi bi-pencil"></i>
+          </Button>
+          <Button className="m-1 shadow-sm" variant="danger" size="sm" type="button" 
+            onClick={(e) => {
+              e.stopPropagation;
+              handleDelete(application.id);
+            }}
+          >
+            <i className="bi bi-trash"></i>
+          </Button>
         </td>
       </tr>
   );
+}
+
+// Helper Function to map priorities to the correct Bootstrap badge
+function getPriorityBadge(priority) {
+  switch(priority) {
+    case 'High':
+      return <Badge bg="danger">High</Badge>;
+    case 'Medium': 
+      return <Badge bg="warning" text="dark">Medium</Badge>; // Dark text for readability on yellow
+    case 'Low': 
+      return <Badge bg="info">Low</Badge>;
+    default: 
+      return <Badge bg="secondary">N/A</Badge>;
+  }
+}
+
+function getStatusBadge(status) {
+  switch(status) {
+    case 'Offer Recieved!': 
+      return <Badge pill bg="success">Offer Recieved!</Badge>;
+    case 'Interview':
+    case 'Assessment Centre': 
+      return <Badge pill bg="primary">{status}</Badge>;
+    case 'Online Assessment': 
+      return <Badge pill bg="info">{status}</Badge>;
+    default: 
+      return <Badge pill bg="secondary" className="text-wrap">{status || 'Yet to Apply'}</Badge>;
+  }
 }
 
 // function to get the data currently stored in Local Storage
@@ -48,15 +94,17 @@ function ApplicationTable ({ table }) {
   const [applications, setApplications] = useState(() => {
     return initialiseLocalStorage('dashboard_applications', table);
   });
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showFormModal, setshowFormModal] = useState(false);
   const [searchByCompany, setSearchByCompany] = useState(true);
+  const [editingApp, setEditingApp] = useState(null);
+  const [viewingApp, setViewingApp] = useState(null);
+  const [showViewModal, setShowViewModal] = useState(false);
 
 
   useEffect(() => {
     const stringifiedApplications = JSON.stringify(applications);
     localStorage.setItem('dashboard_applications', stringifiedApplications);
   }, [applications]);
-
 
 
   // runs for each 'application' (index) in the table array
@@ -74,6 +122,23 @@ function ApplicationTable ({ table }) {
       return application.id !== id;
     });
     setApplications(newTable);
+  }
+
+  function handleEdit (id) {
+    // Find the application to edit
+    const appToEdit = applications.find(app => app.id === id);
+    setEditingApp(appToEdit);
+    setshowFormModal(true);
+  }
+
+  function handleOpenAddModal() {
+    setEditingApp(null); // Clear any old data
+    setshowFormModal(true);
+  }
+
+  function handleView(application) {
+    setViewingApp(application);
+    setShowViewModal(true);
   }
 
   return (
@@ -101,7 +166,7 @@ function ApplicationTable ({ table }) {
           
           {/* Right: The Add Button */}
           <Col xs={12} md={4} lg={3} className="d-grid">
-            <Button variant="success" onClick={() => setIsModalOpen(true)}>
+            <Button variant="success" onClick={handleOpenAddModal}>
               + Add Application
             </Button>
           </Col>
@@ -110,89 +175,224 @@ function ApplicationTable ({ table }) {
       </div>
 
 
-        <div id="ApplicationTable">
-          <Table striped bordered hover responsive>
-            <thead>
-              <ApplicationCategoryRow />
-            </thead>
-            <tbody>
-            {/* Creates a copy of 'table' and temporarily calls each index (each application object) 'application'
-              - Repeats the function to dynamically render a row for each index (each application object in the array)
-              - Then the .map function returns the result (the list of rendered rows) 
-            */}
-              {filteredTable.map((application) => (
-                <ApplicationRow key={application.id} application={application} handleDelete={handleDelete} />
-              ))}
-            </tbody>
-          </Table>
-        </div>
+      <div id="ApplicationTable">
+        <Table striped bordered hover responsive>
+          <thead>
+            <ApplicationCategoryRow />
+          </thead>
+          <tbody>
+          {/* Creates a copy of 'table' and temporarily calls each index (each application object) 'application'
+            - Repeats the function to dynamically render a row for each index (each application object in the array)
+            - Then the .map function returns the result (the list of rendered rows) 
+          */}
+            {filteredTable.map((application) => (
+              <ApplicationRow key={application.id} application={application} handleDelete={handleDelete} handleEdit={handleEdit} handleView={handleView}/>
+            ))}
+          </tbody>
+        </Table>
+      </div>
 
+      <Modal 
+        show={showFormModal} 
+        onHide={() => setshowFormModal(false)}
+        centered
+        size="lg"
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>{editingApp ? "Edit Application" : "Add New Application"}</Modal.Title>
+        </Modal.Header>
+        
+        <Modal.Body>
+          <ApplicationForm 
+            applications={applications} 
+            setApplications={setApplications} 
+            setshowFormModal={setshowFormModal}
+            editingApp={editingApp}
+          />
+        </Modal.Body>
+      </Modal>
 
-
-        <Modal 
-          show={isModalOpen} 
-          onHide={() => setIsModalOpen(false)}
-          centered // This makes the window float in the middle of the screen
-        >
-          <Modal.Header closeButton>
-            <Modal.Title>Add New Application</Modal.Title>
-          </Modal.Header>
-          
-          <Modal.Body>
-            <ApplicationForm 
-              applications={applications} 
-              setApplications={setApplications} 
-              setIsModalOpen={setIsModalOpen}
-            />
-          </Modal.Body>
-        </Modal>
+      <ApplicationViewModal 
+        show={showViewModal}
+        onHide={() => setShowViewModal(false)}
+        application={viewingApp}
+      />
     </>
   );
 }
 
-function ApplicationForm({ applications, setApplications, setIsModalOpen }) {
+function ApplicationForm({ applications, setApplications, setshowFormModal, editingApp }) {
+  
   function handleSubmit(event) {
     event.preventDefault();
-    const nextID = Date.now();
     const form = new FormData(event.target);
 
-    const new_application = {
-      id: nextID, 
-      role: form.get("role") ? form.get("role"):'',
-      company: form.get("company") ? form.get("company"):'',
-      priority: "Medium",
-      type: "Unknown",
-      applied: false,
-      status: "",
-      notes: ""
+    const new_application = { 
+      id: editingApp ? editingApp.id : Date.now(), 
+      role: form.get("role") || '',
+      company: form.get("company") || '',
+      priority: form.get("priority") || 'N/A',
+      type: form.get("type") || 'Unknown',
+      status: form.get("status") || '',
+      notes: form.get("notes") || '',
+      jobDescription: form.get("jobDescription") || ''
     }
-    setApplications([ ...applications, new_application ]);
-    setIsModalOpen(false);
+
+    if (editingApp) {
+      // editing an existing application
+      const updatedApplications = applications.map((app) =>
+        app.id === editingApp.id ? new_application : app
+      );
+      setApplications(updatedApplications);
+    } else {
+      // adding a new application
+      setApplications([ ...applications, new_application ]);
+    }
+    setshowFormModal(false);
   }
 
   return (
     <>
       <Form name="applicationform" onSubmit={handleSubmit}>
-        <Form.Group className="mb-3" controlId="formRole">
-          <Form.Label>
-            Role: 
-            <Form.Control type="text" name="role" placeholder="e.g. Software Engineer" required />
-          </Form.Label>
-        </Form.Group>
+
+        <Row>
+          <Col md={6}>
+            <FloatingLabel label="Role*" className="mb-3" controlId="floatingRole">  
+              <Form.Control type="text" name="role" 
+                defaultValue={editingApp ? editingApp.role : ''} 
+                placeholder="Role" required 
+              />
+            </FloatingLabel>
+          </Col>
+          <Col md={6}>
+            <FloatingLabel label="Company*" className="mb-3" controlId="floatingCompany">
+              <Form.Control type="text" name="company" 
+                defaultValue={editingApp ? editingApp.company : ''} 
+                placeholder="Company" required 
+              />
+            </FloatingLabel>
+          </Col>
+        </Row>
+
+        <Row>
+          <Col md={4}>
+          <FloatingLabel controlId="floatingPriority" label="Priority" className="mb-3">
+            <Form.Select name="priority" defaultValue={editingApp ? editingApp.priority : ''}>
+              <option disabled value="">Select...</option>
+              <option value="High">High</option>
+              <option value="Medium">Medium</option>
+              <option value="Low">Low</option>
+              <option value="N/A">N/A</option>
+            </Form.Select>
+          </FloatingLabel>
+        </Col>
+        <Col md={4}>
+          <FloatingLabel controlId="floatingType" label="Application Type" className="mb-3">
+            <Form.Select name="type" defaultValue={editingApp ? editingApp.type : ''}>
+              <option disabled value="">Select...</option>
+              <option value="Spring Week">Spring Week</option>
+              <option value="Internship">Internship</option>
+              <option value="Placement Year">Placement Year</option>
+              <option value="Grad Role">Grad Role</option>
+              <option value="Summer Job">Summer Job</option>
+              <option value="Unknown">Unknown</option>
+            </Form.Select>
+          </FloatingLabel>
+        </Col>
+        <Col md={4}>
+          <FloatingLabel controlId="floatingStatus" label="Status" className="mb-3">
+            <Form.Select name="status" defaultValue={editingApp ? editingApp.status : ''}>
+              <option disabled value="">Select...</option>
+              <option value="Yet to Apply">Yet to Apply</option>
+              <option value="Online Assessment">Online Assessment</option>
+              <option value="Interview">Interview</option>
+              <option value="Assessment Centre">Assessment Centre</option>
+              <option value="Offer Recieved!">Offer Recieved!</option>
+            </Form.Select>
+          </FloatingLabel>
+        </Col>
+        </Row>
+
+        <FloatingLabel label="Notes (e.g. Paid accom or travel?)" className="mb-3" controlId="floatingNotes">
+            <Form.Control as="textarea" name="notes" 
+              defaultValue={editingApp ? editingApp.notes : ''} 
+              placeholder="Notes" 
+              style={{ height: '80px' }}
+            />
+        </FloatingLabel>
+
+      <FloatingLabel label="Job Description (Paste full text here)" className="mb-2" controlId="floatingJobDesc">
+        <Form.Control as="textarea" name="jobDescription" 
+          defaultValue={editingApp ? editingApp.jobDescription : ''} 
+          placeholder="Job Description" 
+          style={{ height: '150px' }} 
+        />
+      </FloatingLabel>
         
-        <Form.Group className="mb-3" controlId="formCompany">
-          <Form.Label>Company:</Form.Label>
-            <Form.Control type="text" name="company" placeholder="e.g. Google" required />
-        </Form.Group>
-        
-        <div className="d-grid mt-4">
-          <Button variant="primary" type="submit">
-            Add New Application
+        <div className="d-flex justify-content-between align-items-center mt-3">
+          <small className='text-muted'>* Required fields</small>
+          <Button variant="primary" type="submit" className="px-4">
+            {editingApp ? "Save Changes" : "Add Application"}
           </Button>
         </div>
       </Form>
     </>
   )
+}
+
+function ApplicationViewModal({ show, onHide, application }) {
+  const [isCopied, setIsCopied] = useState(false);
+
+  // If there is no application selected, don't crash, just render nothing
+  if (!application) return null;
+
+  function handleCopy() {
+    const textToCopy = application.jobDescription || "No job description provided.";
+    navigator.clipboard.writeText(textToCopy);
+    
+    // Temporarily show the checkmark icon
+    setIsCopied(true);
+    setTimeout(() => setIsCopied(false), 2000); // Reset after 2 seconds
+  }
+
+  return (
+    <Modal show={show} onHide={onHide} centered size="lg">
+      <Modal.Header closeButton>
+        <Modal.Title className="fw-bold">{application.role} at {application.company}</Modal.Title>
+      </Modal.Header>
+      
+      <Modal.Body>
+        <Row className="mb-4">
+          <Col md={6}>
+            <p><strong>Priority:</strong> {application.priority}</p>
+            <p><strong>Type:</strong> {application.type}</p>
+          </Col>
+          <Col md={6}>
+            <p><strong>Status:</strong> {application.status}</p>
+            <p><strong>Notes:</strong> {application.notes || "None"}</p>
+          </Col>
+        </Row>
+
+        <div className="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
+          <h5 className="mb-0 fw-bold">Job Description</h5>
+          <Button variant="outline-secondary" size="sm" onClick={handleCopy}>
+            {isCopied ? (
+              <><i className="bi bi-check-lg text-success"></i> Copied!</>
+            ) : (
+              <><i className="bi bi-clipboard"></i> Copy Text</>
+            )}
+          </Button>
+        </div>
+        
+        <div 
+          className="bg-body-tertiary p-3 rounded" 
+          style={{ whiteSpace: "pre-wrap", maxHeight: "400px", overflowY: "auto" }}
+        >
+          {application.jobDescription || <span className="text-muted">No description provided.</span>}
+        </div>
+      </Modal.Body>
+    </Modal>
+  );
 }
 
 // Function to get the saved theme from Local Storage
@@ -220,7 +420,7 @@ export default function App() {
   };
 
   return (
-    <Container fluid className="py-5 px-md-5">
+    <Container fluid="xl" className="py-5 px-md-5">
 
       <Row className="align-items-center mb-4 pb-2 border-bottom">
         <Col xs={8} md={8} className="text-center text-md-start mb-3 mb-md-0">
@@ -254,39 +454,7 @@ export default function App() {
 }
 
 
-function SearchBar ({ searchQuery, setSearchQuery, searchByCompany, setSearchByCompany }) {
-  const placeholder = "Search by " + (searchByCompany ? 'Company' : 'Role')
-
-  return (
-    <Form.Group controlId="searchBar">
-      <Form.Control className="rounded-pill px-3"
-        type="Search" 
-        placeholder= {placeholder} 
-        value={searchQuery} 
-        onChange={(event) => setSearchQuery(event.target.value)}
-      />
-    </Form.Group>
-  );
-}
-
-function FilterButton({ searchByCompany, setSearchByCompany }) {
-  function handleFilterButton(){
-    setSearchByCompany(!searchByCompany);
-  }
-
-  return (
-    <>
-      <Button type="button" onClick={handleFilterButton}>
-            Search by {!searchByCompany ? 'Company' : 'Role'}
-      </Button>
-    </>
-  );
-}
-
-
-
-
-
+// Static function to display the top row of the applications table
 function ApplicationCategoryRow () {
   return (
       <tr>
@@ -294,7 +462,6 @@ function ApplicationCategoryRow () {
         <th scope="col">Company</th>
         <th scope="col">Priority</th>
         <th scope="col">Type</th>
-        <th scope="col">Applied</th>
         <th scope="col">Status</th>
         <th scope="col">Notes</th>
         <th scope="col">Actions</th>
