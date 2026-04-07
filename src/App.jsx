@@ -3,7 +3,6 @@ import {
   Container, Table, Button, Form, Modal, Row, Col, InputGroup, Badge, FloatingLabel
 } from 'react-bootstrap';
 
-
 // Dummy Data
 const DummyData = [
   {
@@ -13,7 +12,7 @@ const DummyData = [
     priority: "High", 
     type: "Internship",  
     status: "Interview", 
-    notes: "First technical interview next Tuesday. Focus prep on LeetCode Mediums. Need to make sure I bring up my Calendar Web App project to highlight my experience building RESTful APIs with Node.js and Express.",
+    notes: "Technical interview next Tuesday. Focus prep on LeetCode Mediums (Dynamic Programming & Graphs). Talk about experience building RESTful APIs with Node.js and Express.",
     jobDescription: `Join Google as a Software Engineering Intern and help build products that create opportunities for everyone.
 
 Responsibilities:
@@ -54,7 +53,7 @@ Minimum qualifications:
     priority: "High", 
     type: "Spring Week", 
     status: "Online Assessment", 
-    notes: "Passed initial screening. OA features a HackerRank algorithmic test. Need to review banking sector commercial awareness and computational complexity before taking it.",
+    notes: "OA features a HackerRank algorithmic test. Need to review banking sector commercial awareness and computational complexity before taking it.",
     jobDescription: `Experience the intersection of finance and technology on our Spring Week programme.
 
 What to expect:
@@ -74,7 +73,7 @@ Requirements:
     priority: "High", 
     type: "Internship",  
     status: "Yet to Apply", 
-    notes: "Top priority. Need to brush up on Probability and Linear Algebra for the technical assessment. Plan to highlight my UKMT Silver Award and Further Maths background to demonstrate logical precision under timed conditions.",
+    notes: "Top priority. Need to brush up on Probability and Linear Algebra for the technical assessment. Plan to highlight my UKMT awards and Further Maths background to demonstrate logical precision under timed conditions.",
     jobDescription: `Join Citadel as a Quantitative Researcher and work at the forefront of the world's capital markets.
 
 Responsibilities:
@@ -394,7 +393,7 @@ function ApplicationForm({ applications, setApplications, setshowFormModal, edit
         </Col>
         </Row>
 
-        <FloatingLabel label="Notes (e.g. Paid accom or travel?)" className="mb-3" controlId="floatingNotes">
+        <FloatingLabel label="Notes" className="mb-3" controlId="floatingNotes">
             <Form.Control as="textarea" name="notes" 
               defaultValue={editingApp ? editingApp.notes : ''} 
               placeholder="Notes" 
