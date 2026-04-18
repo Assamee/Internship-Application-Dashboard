@@ -198,10 +198,13 @@ function ApplicationTable ({ table }) {
   });
 
   function handleDelete (id) {
-    const newTable = applications.filter((application) => {
+
+    if (window.confirm("Are you sure you want to delete this application? This action cannot be undone.")) {
+      const newTable = applications.filter((application) => {
       return application.id !== id;
     });
     setApplications(newTable);
+    }
   }
 
   function handleEdit (id) {
