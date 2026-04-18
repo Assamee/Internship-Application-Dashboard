@@ -178,8 +178,7 @@ function ApplicationTable ({ table }) {
   const [searchByCompany, setSearchByCompany] = useState(true);
   const [editingApp, setEditingApp] = useState(null);
   const [viewingApp, setViewingApp] = useState(null);
-  const [showViewModal, setShowViewModal] = useState(false);
-
+  const [appToDelete, setAppToDelete] = useState(null);
 
   useEffect(() => {
     const stringifiedApplications = JSON.stringify(applications);
@@ -197,14 +196,22 @@ function ApplicationTable ({ table }) {
     }
   });
 
+  // When the delete button is clicked:
   function handleDelete (id) {
+    // Save the ID of the application we want to delete
+    setAppToDelete(id);
+  }
 
-    if (window.confirm("Are you sure you want to delete this application? This action cannot be undone.")) {
-      const newTable = applications.filter((application) => {
-      return application.id !== id;
+  // When the user confirms deletion in the modal:
+  function handleConfirmDelete() {
+    const newTable = applications.filter((application) => {
+      // appToDelete is the ID of the app we want to delete
+      return application.id !== appToDelete;
     });
+    // Update the Entire UI table
     setApplications(newTable);
-    }
+    // Clear the saved ID of the application to delete
+    setAppToDelete(null);
   }
 
   function handleEdit (id) {
@@ -221,7 +228,6 @@ function ApplicationTable ({ table }) {
 
   function handleView(application) {
     setViewingApp(application);
-    setShowViewModal(true);
   }
 
   return (
@@ -301,11 +307,38 @@ function ApplicationTable ({ table }) {
 
       </Modal>
 
-      <ApplicationViewModal 
-        show={showViewModal}
-        onHide={() => setShowViewModal(false)}
+      {/*If viewingApp exists then show the modal*/}
+      <ApplicationViewModal
+        show={!!viewingApp}
+        onHide={() => setViewingApp(null)}
         application={viewingApp}
       />
+
+      {/*If viewingApp exists then show the modal*/}
+      <Modal
+        show={!!appToDelete}
+        onHide={() => setAppToDelete(null)}
+        centered
+      >
+      <Modal.Header closeButton>
+        <Modal.Title>Confirm Deletion</Modal.Title>
+      </Modal.Header>
+
+      <Modal.Body>
+        <p>Are you sure you want to delete this application? This action cannot be undone.</p>
+      </Modal.Body>
+
+      <Modal.Footer>
+        <Button variant="secondary" onClick={() => setAppToDelete(null)}>
+          Cancel
+        </Button>
+
+        <Button variant="danger" onClick={handleConfirmDelete}>
+          Delete
+        </Button>
+      </Modal.Footer>
+
+      </Modal>
     </>
   );
 }
