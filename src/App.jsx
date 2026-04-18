@@ -272,11 +272,12 @@ function ApplicationTable ({ table }) {
         </Table>
       </div>
 
-      <Modal 
+      <Modal
         show={showFormModal} 
         onHide={() => setshowFormModal(false)}
         centered
         size="lg"
+        scrollable
       >
         <Modal.Header closeButton>
           <Modal.Title>{editingApp ? "Edit Application" : "Add New Application"}</Modal.Title>
@@ -290,6 +291,11 @@ function ApplicationTable ({ table }) {
             editingApp={editingApp}
           />
         </Modal.Body>
+
+        <Modal.Footer>
+          <ApplicationFormSaveButton editingApp={editingApp} />
+        </Modal.Footer>
+
       </Modal>
 
       <ApplicationViewModal 
@@ -297,6 +303,19 @@ function ApplicationTable ({ table }) {
         onHide={() => setShowViewModal(false)}
         application={viewingApp}
       />
+    </>
+  );
+}
+
+function ApplicationFormSaveButton({ editingApp }) {
+  return (
+    <>
+      <div className="d-flex justify-content-between align-items-center w-100">
+        <small className='text-muted'>* Required fields</small>
+        <Button variant="primary" type="submit" form="applicationform" className="px-4">
+          {editingApp ? "Save Changes" : "Add Application"}
+        </Button>
+      </div>
     </>
   );
 }
@@ -333,7 +352,7 @@ function ApplicationForm({ applications, setApplications, setshowFormModal, edit
 
   return (
     <>
-      <Form name="applicationform" onSubmit={handleSubmit}>
+      <Form id="applicationform" name="applicationform" onSubmit={handleSubmit}>
 
         <Row>
           <Col md={6}>
@@ -401,20 +420,14 @@ function ApplicationForm({ applications, setApplications, setshowFormModal, edit
             />
         </FloatingLabel>
 
-      <FloatingLabel label="Job Description (Paste full text here)" className="mb-2" controlId="floatingJobDesc">
-        <Form.Control as="textarea" name="jobDescription" 
-          defaultValue={editingApp ? editingApp.jobDescription : ''} 
-          placeholder="Job Description" 
-          style={{ height: '150px' }} 
-        />
-      </FloatingLabel>
-        
-        <div className="d-flex justify-content-between align-items-center mt-3">
-          <small className='text-muted'>* Required fields</small>
-          <Button variant="primary" type="submit" className="px-4">
-            {editingApp ? "Save Changes" : "Add Application"}
-          </Button>
-        </div>
+        <FloatingLabel label="Job Description (Paste full text here)" className="mb-2" controlId="floatingJobDesc">
+          <Form.Control as="textarea" name="jobDescription" 
+            defaultValue={editingApp ? editingApp.jobDescription : ''} 
+            placeholder="Job Description" 
+            style={{ height: '150px' }} 
+          />
+        </FloatingLabel>
+
       </Form>
     </>
   )
