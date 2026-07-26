@@ -93,18 +93,18 @@ Minimum qualifications:
 
 function ApplicationRow ({ application, handleDelete, handleEdit, handleView }) {
   return (
-      <tr className='align-Middle' onClick={() => handleView(application)} style={{ cursor: "pointer" }}>
-        <td scope="col" className='fw-bold'>{application.role}</td>
-        <td scope="col">{application.company}</td>
-        <td scope="col">{getPriorityBadge(application.priority)}</td>
-        <td scope="col">{application.type}</td>
-        <td scope="col">{getStatusBadge(application.status)}</td>
-        <td scope="col" className="text-truncate" style={{ maxWidth: "150px" }}>
+      <tr className='align-middle' onClick={() => handleView(application)} style={{ cursor: "pointer" }}>
+        <td className='fw-bold'>{application.role}</td>
+        <td>{application.company}</td>
+        <td>{getPriorityBadge(application.priority)}</td>
+        <td>{application.type}</td>
+        <td>{getStatusBadge(application.status)}</td>
+        <td className="text-truncate" style={{ maxWidth: "150px" }}>
           {application.notes}
         </td>
 
         {/* e.stopPropagation to stop also triggering the 'View' modal */}
-        <td scope="col">
+        <td>
           <Button className="m-1 shadow-sm" variant="info" size="sm" type="button" 
             onClick={(e) => {
               e.stopPropagation(); 
@@ -162,6 +162,7 @@ function initialiseLocalStorage(storageKey, defaultData) {
     try {
       return JSON.parse(savedData);
     } catch(error) {
+      console.error("Error parsing saved data:", error);
       return defaultData;
     }
   }
@@ -314,7 +315,7 @@ function ApplicationTable ({ table }) {
         application={viewingApp}
       />
 
-      {/*If viewingApp exists then show the modal*/}
+      {/*If appToDelete exists then show the deletion modal*/}
       <Modal
         show={!!appToDelete}
         onHide={() => setAppToDelete(null)}
